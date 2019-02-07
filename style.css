@@ -1,0 +1,41 @@
+*, body, html {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#header {
+  width: 100%;
+  height: 25%;
+  background-color: #8ccdfc;
+  margin-bottom: 1%;
+}
+
+#keyboard {
+  width: 100%;
+  height: 72%;
+  text-align: center;
+}
+
+.key {
+  display: inline-block;
+  margin: 1%;
+  width: 43%;
+  height: 43%;
+}
+
+#blue {
+  background-color: #8ccdfc;
+}
+
+#purple {
+  background-color: #9e5afb;
+}
+
+#green {
+  background-color: #c2fb73;
+}
+
+#orange {
+  background-color: #fa8f41;
+}
