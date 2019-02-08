@@ -8,10 +8,21 @@
 </head>
 
 <body>
-  <div id="header" data-color="blue"></div>
+  <div id="header" data-color="blue">
+    <select id="keyNum">
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    </select>
+    <button id="start">Start</button>
+    <button id="end" style="display: none;">End</button>
+    <p id="score">0</p>
+  </div>
   <div id="keyboard">
     <div class="key" id="green"></div>
     <div class="key" id="blue"></div>
+    <div class="key" id="darkblue" style="display: none;"></div>
+    <div class="key" id="pink" style="display: none;"></div>
     <div class="key" id="purple"></div>
     <div class="key" id="orange"></div>
   </div>
