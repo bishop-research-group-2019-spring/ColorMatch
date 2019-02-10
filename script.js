@@ -16,8 +16,9 @@ $(document).ready(function() {
     let right = left + $(targetKey).width(),
       bottom = top + $(targetKey).height();
 
-    //if the user touches the correct key, change header
+    //if the user touches the correct key
     if (touch.pageX > left && touch.pageX < right && touch.pageY > top && touch.pageY < bottom) {
+      //change header to a new color
       let randomNum = Math.floor(Math.random() * keyNum); //generate a random number between 0 and the number of keys
       while (ids[randomNum] == curColor) {
         randomNum = Math.floor(Math.random() * keyNum); //generate again if it's the same as the current color
@@ -25,8 +26,21 @@ $(document).ready(function() {
       $("#header").data("color", ids[randomNum]);
       $("#header").css("background-color", colors[randomNum]);
 
+      //update score
       score++;
       $("#score").text(score + "");
+
+      //posting logs to google sheet
+      $.ajax({
+        url: "https://script.google.com/macros/s/AKfycbzcjmIPchxdXsJkEfb5S82-t98hwoxo3wNG8RPl16PCx5oOEzs/exec",
+        type: "post",
+        data: {
+          timestamp: $.now(),
+          datetime: getDatetime(),
+          action: "match success",
+          data: curColor
+        }
+      });
     }
   });
 
@@ -37,6 +51,7 @@ $(document).ready(function() {
     score = 0;
     $("#score").text(score + "");
 
+    //change layout accordding to how many keys user want
     keyNum = $("#keyNum").val();
     if (keyNum == 4) {
       $("#darkblue").hide();
@@ -51,11 +66,46 @@ $(document).ready(function() {
       $("#pink").show();
       $(".key").css("width", "30%");
     }
+
+    //posting logs to google sheet
+    $.ajax({
+      url: "https://script.google.com/macros/s/AKfycbzcjmIPchxdXsJkEfb5S82-t98hwoxo3wNG8RPl16PCx5oOEzs/exec",
+      type: "post",
+      data: {
+        timestamp: $.now(),
+        datetime: getDatetime(),
+        action: "start",
+        data: keyNum
+      }
+    });
   });
 
   $("#end").on('click', function() {
     $("#end").hide();
     $("#start").show();
+
+    //posting logs to google sheet
+    $.ajax({
+      url: "https://script.google.com/macros/s/AKfycbzcjmIPchxdXsJkEfb5S82-t98hwoxo3wNG8RPl16PCx5oOEzs/exec",
+      type: "post",
+      data: {
+        timestamp: $.now(),
+        datetime: getDatetime(),
+        action: "end",
+        data: score
+      }
+    });
   });
 
-});;
+});
+
+function getDatetime() {
+  let currentdate = new Date();
+  let datetime = currentdate.getDate() + "/" +
+    (currentdate.getMonth() + 1) + "/" +
+    currentdate.getFullYear() + " " +
+    currentdate.getHours() + ":" +
+    currentdate.getMinutes() + ":" +
+    currentdate.getSeconds();
+  return datetime;
+}
