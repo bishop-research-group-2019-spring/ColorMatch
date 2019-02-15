@@ -12,9 +12,12 @@ let seq6 = [5, 3, 4, 2, 3, 2, 0, 4, 5, 4, 0, 3, 0, 5, 0, 2];
 
 $(document).ready(function() {
 
-  $(document).on('touchmove', function(e) {
+  $(document).on('touchmove mousemove', function(e) {
     e.preventDefault();
-    var touch = e.touches[0];
+    var pointer = e;
+    if (e.type == "touchmove") {
+      pointer = e.touches[0];
+    }
     let curColor = $("#header").data("color"); //the current header color
     let targetKey = $("#" + curColor); //the correct key
 
@@ -25,7 +28,7 @@ $(document).ready(function() {
       bottom = top + $(targetKey).height();
 
     //if the user touches the correct key
-    if (touch.pageX > left && touch.pageX < right && touch.pageY > top && touch.pageY < bottom) {
+    if (pointer.pageX > left && pointer.pageX < right && pointer.pageY > top && pointer.pageY < bottom) {
       //change header to a new color
       let num = 0;
       if (mode == "random") {
