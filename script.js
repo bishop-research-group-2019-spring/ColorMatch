@@ -1,5 +1,5 @@
-let ids = ["blue", "purple", "green", "orange", "darkblue", "pink"];
-let colors = ["#8ccdfc", "#ad73fc", "#c2fb73", "#fa8f41", "#1451c4", "#fc73f0"];
+let ids = ["blue", "yellow", "green", "orange", "darkblue", "pink"];
+let colors = ["#8ccdfc", "#fcf273", "#c2fb73", "#fa8f41", "#1451c4", "#fc73f0"];
 let score = 0,
   index = 0,
   keyNum = 4;
@@ -13,6 +13,7 @@ let seq6 = [5, 3, 4, 2, 3, 2, 0, 4, 5, 4, 0, 3, 0, 5, 0, 2];
 $(document).ready(function() {
 
   $(document).on('touchmove', function(e) {
+    e.preventDefault();
     var touch = e.touches[0];
     let curColor = $("#header").data("color"); //the current header color
     let targetKey = $("#" + curColor); //the correct key
