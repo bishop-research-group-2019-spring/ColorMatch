@@ -1,7 +1,14 @@
 let ids = ["blue", "purple", "green", "orange", "darkblue", "pink"];
 let colors = ["#8ccdfc", "#9e5afb", "#c2fb73", "#fa8f41", "#1451c4", "#fc73f0"];
 let score = 0,
+  index = 0,
   keyNum = 4;
+
+//sequences for control mode
+let mode = "control";
+let seq4 = [1, 3, 0, 2, 3, 2, 0, 1, 0, 2];
+let seq5 = [1, 3, 4, 0, 2, 3, 2, 4, 1, 4, 2, 1, 0, 3, 4, 3, 0, 1, 2];
+let seq6 = [5, 3, 4, 2, 3, 2, 0, 4, 5, 4, 0, 3, 0, 5, 0, 2];
 
 $(document).ready(function() {
 
@@ -19,12 +26,24 @@ $(document).ready(function() {
     //if the user touches the correct key
     if (touch.pageX > left && touch.pageX < right && touch.pageY > top && touch.pageY < bottom) {
       //change header to a new color
-      let randomNum = Math.floor(Math.random() * keyNum); //generate a random number between 0 and the number of keys
-      while (ids[randomNum] == curColor) {
-        randomNum = Math.floor(Math.random() * keyNum); //generate again if it's the same as the current color
+      let num = 0;
+      if (mode == "random") {
+        num = Math.floor(Math.random() * keyNum); //generate a random number between 0 and the number of keys
+        while (ids[num] == curColor) {
+          num = Math.floor(Math.random() * keyNum); //generate again if it's the same as the current color
+        }
+      } else {
+        if (keyNum == 4) {
+          num = seq4[index % (seq4.length)];
+        } else if (keyNum == 5) {
+          num = seq5[index % (seq5.length)];
+        } else if (keyNum == 6) {
+          num = seq6[index % (seq6.length)];
+        }
+        index++;
       }
-      $("#header").data("color", ids[randomNum]);
-      $("#header").css("background-color", colors[randomNum]);
+      $("#header").data("color", ids[num]);
+      $("#header").css("background-color", colors[num]);
 
       //update score
       score++;
@@ -48,8 +67,14 @@ $(document).ready(function() {
     $("#start").hide();
     $("#end").show();
 
+    //reset index, score and header color
+    index = 0;
     score = 0;
     $("#score").text(score + "");
+    $("#header").data("color", "green");
+    $("#header").css("background-color", "#c2fb73");
+
+    mode = $("#mode").val();
 
     //change layout accordding to how many keys user want
     keyNum = $("#keyNum").val();
@@ -75,7 +100,7 @@ $(document).ready(function() {
         timestamp: $.now(),
         datetime: getDatetime(),
         action: "start",
-        data: keyNum
+        data: keyNum + " " + mode
       }
     });
   });
