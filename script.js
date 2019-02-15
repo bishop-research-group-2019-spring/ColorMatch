@@ -1,5 +1,5 @@
 let ids = ["blue", "purple", "green", "orange", "darkblue", "pink"];
-let colors = ["#8ccdfc", "#9e5afb", "#c2fb73", "#fa8f41", "#1451c4", "#fc73f0"];
+let colors = ["#8ccdfc", "#ad73fc", "#c2fb73", "#fa8f41", "#1451c4", "#fc73f0"];
 let score = 0,
   index = 0,
   keyNum = 4;
