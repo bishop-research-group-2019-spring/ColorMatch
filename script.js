@@ -122,13 +122,6 @@ $(document).ready(function() {
     $("#start").show();
     inSession = false;
 
-    //reset index, score and header color
-    index = 0;
-    score = 0;
-    $("#score").text(score + "");
-    $("#header").data("color", "green");
-    $("#header").css("background-color", "#c2fb73");
-
     //posting logs to google sheet
     $.ajax({
       url: "https://script.google.com/macros/s/AKfycbzcjmIPchxdXsJkEfb5S82-t98hwoxo3wNG8RPl16PCx5oOEzs/exec",
@@ -140,6 +133,13 @@ $(document).ready(function() {
         data: score
       }
     });
+
+    //reset index, score and header color
+    index = 0;
+    score = 0;
+    $("#score").text(score + "");
+    $("#header").data("color", "green");
+    $("#header").css("background-color", "#c2fb73");
   });
 
 });
