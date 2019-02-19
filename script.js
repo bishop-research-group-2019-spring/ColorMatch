@@ -2,7 +2,8 @@ let ids = ["blue", "yellow", "green", "orange", "darkblue", "pink"];
 let colors = ["#8ccdfc", "#fcf273", "#c2fb73", "#fa8f41", "#1451c4", "#fc73f0"];
 let score = 0,
   index = 0,
-  keyNum = 4;
+  keyNum = 4,
+  inSession = false;
 
 //sequences for control mode
 let mode = "control";
@@ -12,12 +13,12 @@ let seq6 = [5, 3, 4, 2, 3, 2, 0, 4, 5, 4, 0, 3, 0, 5, 0, 2];
 
 $(document).ready(function() {
 
-  $(document).on('touchmove mousemove', function(e) {
-    e.preventDefault();
-    var pointer = e;
-    if (e.type == "touchmove") {
-      pointer = e.touches[0];
+  $(document).on('touchstart touchmove mousemove', function(e) {
+    if (inSession == false) {
+      return;
     }
+
+    e.preventDefault();
     let curColor = $("#header").data("color"); //the current header color
     let targetKey = $("#" + curColor); //the correct key
 
@@ -27,8 +28,22 @@ $(document).ready(function() {
     let right = left + $(targetKey).width(),
       bottom = top + $(targetKey).height();
 
+    //whether the user touches the correct key
+    let touchRightKey = false;
+    if (e.type != "mousemove") {
+      for (var i = 0; i < e.touches.length; i++) {
+        if (e.touches[i].pageX > left && e.touches[i].pageX < right && e.touches[i].pageY > top && e.touches[i].pageY < bottom) {
+          touchRightKey = true;
+        }
+      }
+    } else {
+      if (e.pageX > left && e.pageX < right && e.pageY > top && e.pageY < bottom) {
+        touchRightKey = true;
+      }
+    }
+
     //if the user touches the correct key
-    if (pointer.pageX > left && pointer.pageX < right && pointer.pageY > top && pointer.pageY < bottom) {
+    if (touchRightKey) {
       //change header to a new color
       let num = 0;
       if (mode == "random") {
@@ -70,14 +85,7 @@ $(document).ready(function() {
   $("#start").on('click', function() {
     $("#start").hide();
     $("#end").show();
-
-    //reset index, score and header color
-    index = 0;
-    score = 0;
-    $("#score").text(score + "");
-    $("#header").data("color", "green");
-    $("#header").css("background-color", "#c2fb73");
-
+    inSession = true;
     mode = $("#mode").val();
 
     //change layout accordding to how many keys user want
@@ -112,6 +120,14 @@ $(document).ready(function() {
   $("#end").on('click', function() {
     $("#end").hide();
     $("#start").show();
+    inSession = false;
+
+    //reset index, score and header color
+    index = 0;
+    score = 0;
+    $("#score").text(score + "");
+    $("#header").data("color", "green");
+    $("#header").css("background-color", "#c2fb73");
 
     //posting logs to google sheet
     $.ajax({
