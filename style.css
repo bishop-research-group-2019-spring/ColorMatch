@@ -13,15 +13,23 @@
 }
 
 select, button {
-  width: 6%;
-  height: 13%;
+  width: 80px;
+  height: 25px;
   margin: 0.5%;
   font-size: 12pt;
 }
 
 #score {
-  margin-left: 49%;
+  display: inline-block;
+  margin-left: 47%;
+  height: 2%;
+  font-size: 20pt;
+  font-weight: bold;
+}
+
+#letter {
   margin-top: 1%;
+  margin-left: 49%;
   font-size: 40pt;
   font-weight: bolder;
   width: 1%;
@@ -39,6 +47,13 @@ select, button {
   margin: 1%;
   width: 43%;
   height: 43%;
+}
+
+.key p {
+  margin-top: 10%;
+  height: 20%;
+  font-size: 40pt;
+  font-weight: bolder;
 }
 
 #blue {

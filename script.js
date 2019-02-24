@@ -1,4 +1,5 @@
 let ids = ["blue", "yellow", "green", "orange", "darkblue", "pink"];
+let letters = ["C", "W", "A", "S", "K", "O"];
 let colors = ["#8ccdfc", "#fcf273", "#c2fb73", "#fa8f41", "#1451c4", "#fc73f0"];
 let score = 0,
   index = 0,
@@ -9,7 +10,7 @@ let score = 0,
 let mode = "control";
 let seq4 = [1, 3, 0, 2, 3, 2, 0, 1, 0, 2];
 let seq5 = [1, 3, 4, 0, 2, 3, 2, 4, 1, 4, 2, 1, 0, 3, 4, 3, 0, 1, 2];
-let seq6 = [5, 3, 4, 2, 3, 2, 0, 4, 5, 4, 0, 3, 0, 5, 0, 2];
+let seq6 = [5, 3, 4, 2, 3, 2, 4, 5, 4, 0, 3, 1, 5, 1, 2];
 
 $(document).ready(function() {
 
@@ -63,10 +64,11 @@ $(document).ready(function() {
       }
       $("#header").data("color", ids[num]);
       $("#header").css("background-color", colors[num]);
+      $("#letter").text(letters[num]);
 
       //update score
       score++;
-      $("#score").text(score + "");
+      $("#score").text("Score: " + score);
 
       //posting logs to google sheet
       $.ajax({
@@ -137,7 +139,8 @@ $(document).ready(function() {
     //reset index, score and header color
     index = 0;
     score = 0;
-    $("#score").text(score + "");
+    $("#score").text("Score: " + score);
+    $("#letter").text("A");
     $("#header").data("color", "green");
     $("#header").css("background-color", "#c2fb73");
   });
