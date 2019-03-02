@@ -9,37 +9,44 @@
 
 <body>
   <div id="header" data-color="green">
+    <select id="mode">
+      <option value="letters">letters</option>
+      <option value="spelling">spelling</option>
+    </select>
     <select id="keyNum">
       <option value="4">4</option>
       <option value="5">5</option>
       <option value="6">6</option>
     </select>
-    <select id="mode">
-      <option value="control">control</option>
-      <option value="random">random</option>
-    </select>
+    <input id="speed" type="text" value="1.5" style="display: none;"></input>
     <button id="start">Start</button>
     <button id="end" style="display: none;">End</button>
-    <p id="score">Score: 0</p>
+    <p id="score">Score: 0 / 30</p>
     <p id="letter">A</p>
   </div>
   <div id="keyboard">
     <div class="key" id="green">
+      <div class="bar"></div>
       <p>A</p>
     </div>
     <div class="key" id="blue">
+      <div class="bar"></div>
       <p>C</p>
     </div>
-    <div class="key" id="darkblue" style="display: none;">
+    <div class="key" id="darkblue">
+      <div class="bar"></div>
       <p>K</p>
     </div>
-    <div class="key" id="pink" style="display: none;">
+    <div class="key" id="pink">
+      <div class="bar"></div>
       <p>O</p>
     </div>
-    <div class="key" id="yellow">
+    <div class="key" id="yellow" style="display: none;">
+      <div class="bar"></div>
       <p>W</p>
     </div>
-    <div class="key" id="orange">
+    <div class="key" id="orange" style="display: none;">
+      <div class="bar"></div>
       <p>S</p>
     </div>
   </div>

@@ -12,8 +12,8 @@
   margin-bottom: 1%;
 }
 
-select, button {
-  width: 80px;
+select, button, input {
+  width: 90px;
   height: 25px;
   margin: 0.5%;
   font-size: 12pt;
@@ -21,14 +21,14 @@ select, button {
 
 #score {
   display: inline-block;
-  margin-left: 47%;
+  margin-left: 45%;
   height: 2%;
   font-size: 20pt;
   font-weight: bold;
 }
 
 #letter {
-  margin-top: 1%;
+  padding-top: 1%;
   margin-left: 49%;
   font-size: 40pt;
   font-weight: bolder;
@@ -40,6 +40,13 @@ select, button {
   height: 72%;
   text-align: center;
   touch-action: none;
+}
+
+.bar {
+  width: 0%;
+  height: 15%;
+  visibility: hidden;
+  background-color: #585858;
 }
 
 .key {
@@ -54,6 +61,7 @@ select, button {
   height: 20%;
   font-size: 40pt;
   font-weight: bolder;
+  display: show;
 }
 
 #blue {

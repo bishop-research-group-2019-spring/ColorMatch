@@ -1,16 +1,22 @@
-let ids = ["blue", "yellow", "green", "orange", "darkblue", "pink"];
-let letters = ["C", "W", "A", "S", "K", "O"];
-let colors = ["#8ccdfc", "#fcf273", "#c2fb73", "#fa8f41", "#1451c4", "#fc73f0"];
-let score = 0,
+var ids = ["green", "blue", "darkblue", "pink", "yellow", "orange"];
+var letters = ["A", "C", "K", "O", "W", "S"];
+var allLetters = ["A B C D E", "F G H I J", "K L M N O", "P Q R S T", "U V W X Y Z"];
+var colors = ["#c2fb73", "#8ccdfc", "#1451c4", "#fc73f0", "#fcf273", "#fa8f41"];
+var score = 0,
+  goalScore = 30,
   index = 0,
   keyNum = 4,
-  inSession = false;
+  inSession = false,
+  prevColor = "",
+  curColor = "",
+  prevKey = "green";
+var barTimer, rightKeyTimer, speed, goal;
 
 //sequences for control mode
-let mode = "control";
-let seq4 = [1, 3, 0, 2, 3, 2, 0, 1, 0, 2];
-let seq5 = [1, 3, 4, 0, 2, 3, 2, 4, 1, 4, 2, 1, 0, 3, 4, 3, 0, 1, 2];
-let seq6 = [5, 3, 4, 2, 3, 2, 4, 5, 4, 0, 3, 1, 5, 1, 2];
+var mode = "control";
+var seq4 = [2, 3, 1, 0, 3, 0, 1, 2, 1, 0]; //10
+var seq5 = [3, 4, 2, 0, 4, 0, 1, 2, 3, 2, 4, 3, 0]; //13
+var seq6 = [3, 5, 2, 0, 5, 0, 1, 2, 3, 2, 4, 0, 4, 2, 1, 0]; //16
 
 $(document).ready(function() {
 
@@ -20,67 +26,31 @@ $(document).ready(function() {
     }
 
     e.preventDefault();
-    let curColor = $("#header").data("color"); //the current header color
+    curColor = $("#header").data("color"); //the current header color
     let targetKey = $("#" + curColor); //the correct key
+    let curKey = getCurKey(e);
 
-    //getting the correct key's position
-    let left = $(targetKey).position().left,
-      top = $(targetKey).position().top;
-    let right = left + $(targetKey).width(),
-      bottom = top + $(targetKey).height();
-
-    //whether the user touches the correct key
-    let touchRightKey = false;
-    if (e.type != "mousemove") {
-      for (var i = 0; i < e.touches.length; i++) {
-        if (e.touches[i].pageX > left && e.touches[i].pageX < right && e.touches[i].pageY > top && e.touches[i].pageY < bottom) {
-          touchRightKey = true;
-        }
+    //spelling mode
+    if (mode == "spelling" && curKey != false && curKey != prevKey) {
+      resetBar(prevKey);
+      prevKey = curKey;
+      animateBar(curKey);
+      if (curKey == curColor) {
+        prevColor = curColor;
+        rightKeyTimer = setTimeout(rightKeyAction, speed);
       }
-    } else {
-      if (e.pageX > left && e.pageX < right && e.pageY > top && e.pageY < bottom) {
-        touchRightKey = true;
-      }
+    } else if (mode == "spelling" && curKey == false) {
+      resetBar(prevKey);
+      prevKey = false;
+      clearTimeout(barTimer);
+      clearTimeout(rightKeyTimer);
     }
 
     //if the user touches the correct key
-    if (touchRightKey) {
-      //change header to a new color
-      let num = 0;
-      if (mode == "random") {
-        num = Math.floor(Math.random() * keyNum); //generate a random number between 0 and the number of keys
-        while (ids[num] == curColor) {
-          num = Math.floor(Math.random() * keyNum); //generate again if it's the same as the current color
-        }
-      } else {
-        if (keyNum == 4) {
-          num = seq4[index % (seq4.length)];
-        } else if (keyNum == 5) {
-          num = seq5[index % (seq5.length)];
-        } else if (keyNum == 6) {
-          num = seq6[index % (seq6.length)];
-        }
-        index++;
+    if (curKey == curColor) {
+      if (mode != "spelling") { //other modes
+        rightKeyAction();
       }
-      $("#header").data("color", ids[num]);
-      $("#header").css("background-color", colors[num]);
-      $("#letter").text(letters[num]);
-
-      //update score
-      score++;
-      $("#score").text("Score: " + score);
-
-      //posting logs to google sheet
-      $.ajax({
-        url: "https://script.google.com/macros/s/AKfycbzcjmIPchxdXsJkEfb5S82-t98hwoxo3wNG8RPl16PCx5oOEzs/exec",
-        type: "post",
-        data: {
-          timestamp: $.now(),
-          datetime: getDatetime(),
-          action: "match success",
-          data: curColor
-        }
-      });
     }
   });
 
@@ -89,22 +59,7 @@ $(document).ready(function() {
     $("#end").show();
     inSession = true;
     mode = $("#mode").val();
-
-    //change layout accordding to how many keys user want
-    keyNum = $("#keyNum").val();
-    if (keyNum == 4) {
-      $("#darkblue").hide();
-      $("#pink").hide();
-      $(".key").css("width", "43%");
-    } else if (keyNum == 5) {
-      $("#darkblue").show();
-      $("#pink").hide();
-      $(".key").css("width", "30%");
-    } else if (keyNum == 6) {
-      $("#darkblue").show();
-      $("#pink").show();
-      $(".key").css("width", "30%");
-    }
+    speed = $("#speed").val() * 1000;
 
     //posting logs to google sheet
     $.ajax({
@@ -120,31 +75,37 @@ $(document).ready(function() {
   });
 
   $("#end").on('click', function() {
-    $("#end").hide();
-    $("#start").show();
-    inSession = false;
-
-    //posting logs to google sheet
-    $.ajax({
-      url: "https://script.google.com/macros/s/AKfycbzcjmIPchxdXsJkEfb5S82-t98hwoxo3wNG8RPl16PCx5oOEzs/exec",
-      type: "post",
-      data: {
-        timestamp: $.now(),
-        datetime: getDatetime(),
-        action: "end",
-        data: score
-      }
-    });
-
-    //reset index, score and header color
-    index = 0;
-    score = 0;
-    $("#score").text("Score: " + score);
-    $("#letter").text("A");
-    $("#header").data("color", "green");
-    $("#header").css("background-color", "#c2fb73");
+    endGame();
   });
 
+});
+
+$('#mode').on('change', function(e) {
+  if ($('#mode').val() == "spelling") {
+    $('#speed').show();
+    $('#keyNum').hide();
+  } else if ($('#mode').val() == "letters") {
+    $('#speed').hide();
+    $('#keyNum').show();
+  }
+});
+
+$('#keyNum').on('change', function(e) {
+  //change layout accordding to how many keys user want
+  keyNum = $("#keyNum").val();
+  if (keyNum == 4) {
+    $("#yellow").hide();
+    $("#orange").hide();
+    $(".key").css("width", "43%");
+  } else if (keyNum == 5) {
+    $("#yellow").show();
+    $("#orange").hide();
+    $(".key").css("width", "30%");
+  } else if (keyNum == 6) {
+    $("#yellow").show();
+    $("#orange").show();
+    $(".key").css("width", "30%");
+  }
 });
 
 function getDatetime() {
@@ -156,4 +117,104 @@ function getDatetime() {
     currentdate.getMinutes() + ":" +
     currentdate.getSeconds();
   return datetime;
+}
+
+function rightKeyAction() {
+  //change header to a new color
+  let num = 0;
+  if (keyNum == 4) {
+    num = seq4[index % (seq4.length)];
+  } else if (keyNum == 5) {
+    num = seq5[index % (seq5.length)];
+  } else if (keyNum == 6) {
+    num = seq6[index % (seq6.length)];
+  }
+  index++;
+  $("#header").data("color", ids[num]);
+  $("#header").css("background-color", colors[num]);
+  $("#letter").text(letters[num]);
+
+  //update score
+  score++;
+  $("#score").text("Score: " + score + " / " + goalScore);
+  if (score == goalScore) {
+    alert("Yay you win!");
+    endGame();
+  }
+
+  //posting logs to google sheet
+  $.ajax({
+    url: "https://script.google.com/macros/s/AKfycbzcjmIPchxdXsJkEfb5S82-t98hwoxo3wNG8RPl16PCx5oOEzs/exec",
+    type: "post",
+    data: {
+      timestamp: $.now(),
+      datetime: getDatetime(),
+      action: "match success",
+      data: curColor
+    }
+  });
+}
+
+function animateBar(id) {
+  $("#" + id + "> .bar").css("visibility", "visible");
+  $("#" + id + "> .bar").animate({
+    width: "100%"
+  }, speed);
+  barTimer = setTimeout(function() {
+    resetBar(id)
+  }, speed + 20);
+}
+
+function resetBar(id) {
+  $("#" + id + "> .bar").stop();
+  $("#" + id + "> .bar").css("width", "0%");
+  $("#" + id + "> .bar").css("visibility", "hidden");
+}
+
+function getCurKey(e) {
+  for (var i = 0; i < keyNum; i++) {
+    let left = $("#" + ids[i]).position().left,
+      top = $("#" + ids[i]).position().top;
+    let right = left + $("#" + ids[i]).width(),
+      bottom = top + $("#" + ids[i]).height();
+
+    if (e.type != "mousemove") {
+      for (var j = 0; j < e.touches.length; j++) {
+        if (e.touches[j].pageX > left && e.touches[j].pageX < right && e.touches[j].pageY > top && e.touches[j].pageY < bottom) {
+          return ids[i];
+        }
+      }
+    } else {
+      if (e.pageX > left && e.pageX < right && e.pageY > top && e.pageY < bottom) {
+        return ids[i];
+      }
+    }
+  }
+  return false;
+}
+
+function endGame() {
+  $("#end").hide();
+  $("#start").show();
+  inSession = false;
+
+  //posting logs to google sheet
+  $.ajax({
+    url: "https://script.google.com/macros/s/AKfycbzcjmIPchxdXsJkEfb5S82-t98hwoxo3wNG8RPl16PCx5oOEzs/exec",
+    type: "post",
+    data: {
+      timestamp: $.now(),
+      datetime: getDatetime(),
+      action: "end",
+      data: score
+    }
+  });
+
+  //reset index, score and header color
+  index = 0;
+  score = 0;
+  $("#score").text("Score: " + score + " / " + goalScore);
+  $("#letter").text("A");
+  $("#header").data("color", "green");
+  $("#header").css("background-color", "#c2fb73");
 }
