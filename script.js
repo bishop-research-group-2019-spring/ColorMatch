@@ -9,12 +9,13 @@ var score = 0,
   letterIndex = 0,
   wordIndex = 0,
   keyNum = 4,
+  speed = 1500,
   inSession = false,
   prevColor = "",
   curColor = "",
   curKey = "",
   prevKey = "";
-var barTimer, rightKeyTimer, failTimer, speed, goal;
+var barTimer, rightKeyTimer, failTimer;
 
 //sequences for letters mode
 var mode = "letters";
@@ -71,7 +72,11 @@ $(document).ready(function() {
     $("#end").show();
     inSession = true;
     mode = $("#mode").val();
-    speed = $("#speed").val() * 1000;
+    if ($("#speed").val() > 0) {
+      speed = $("#speed").val() * 1000;
+    } else {
+      speed = 1500;
+    }
 
     //posting logs to google sheet
     $.ajax({
@@ -81,7 +86,7 @@ $(document).ready(function() {
         timestamp: $.now(),
         datetime: getDatetime(),
         action: "start",
-        data: keyNum + " " + mode
+        data: mode + " " + keyNum + " " + speed
       }
     });
   });
