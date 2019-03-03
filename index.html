@@ -9,20 +9,31 @@
 
 <body>
   <div id="header" data-color="green">
-    <select id="mode">
+    <div id="menu">
+      <p>Mode:</p>
+      <select id="mode">
       <option value="letters">letters</option>
       <option value="spelling">spelling</option>
     </select>
-    <select id="keyNum">
+      <div id="keyNumDiv">
+        <p>Number of keys:</p>
+        <select id="keyNum">
       <option value="4">4</option>
       <option value="5">5</option>
       <option value="6">6</option>
     </select>
-    <input id="speed" type="text" value="1.5" style="display: none;"></input>
-    <button id="start">Start</button>
-    <button id="end" style="display: none;">End</button>
+      </div>
+      <div id="speedDiv" style="display: none;">
+        <p>Selection time (s):</p>
+        <input id="speed" type="text" value="1.5"></input>
+      </div>
+      <button id="start">Start</button>
+      <button id="end" style="display: none;">End</button>
+    </div>
     <p id="score">Score: 0 / 30</p>
-    <p id="letter">A</p>
+    <div id="word">
+      <p id="letter">A</p>
+    </div>
   </div>
   <div id="keyboard">
     <div class="key" id="green">
@@ -33,7 +44,7 @@
       <div class="bar"></div>
       <p>C</p>
     </div>
-    <div class="key" id="darkblue">
+    <div class="key" id="purple">
       <div class="bar"></div>
       <p>K</p>
     </div>
