@@ -11,7 +11,6 @@ var score = 0,
   keyNum = 4,
   speed = 1500,
   inSession = false,
-  prevColor = "",
   curColor = "",
   curKey = "",
   prevKey = "";
@@ -32,8 +31,7 @@ $(document).ready(function() {
 
     e.preventDefault();
     curColor = $("#header").attr("data-color"); //the current header color
-    let targetKey = $("#" + curColor); //the correct key
-    curKey = getCurKey(e);
+    curKey = getCurKey(e); //the current key
 
     //spelling mode
     if (mode == "spelling") {
@@ -43,7 +41,7 @@ $(document).ready(function() {
         }
         prevKey = curKey;
         animateBar(curKey);
-      } else if (curKey == false) {
+      } else if (curKey == false) { //user moves to blank areas
         if (prevKey != "") {
           resetBar(prevKey);
         }
@@ -58,10 +56,9 @@ $(document).ready(function() {
       if (curKey != false && curKey != prevKey) { //user moves to a new key
         prevKey = curKey;
         if (curKey == curColor) { //user moves to the right key
-          prevColor = curColor;
           rightKeyAction();
         }
-      } else if (curKey == false) {
+      } else if (curKey == false) { //user moves to blank areas
         prevKey = false;
       }
     }
@@ -96,6 +93,7 @@ $(document).ready(function() {
   });
 
   $('#mode').on('change', function(e) {
+    //change page layout accordding to the selected mode
     if ($('#mode').val() == "spelling") {
       $('#speedDiv').show();
       $('#keyNumDiv').hide();
@@ -157,15 +155,8 @@ function rightKeyAction() {
     $("#letter").text(letters[num]);
   }
 
-  //update score
-  score++;
-  $("#score").text("Score: " + score + " / " + goalScore);
-  if (score == goalScore) {
-    alert("Yay you win!");
-    endGame();
-  }
-
   if (mode == "spelling") {
+    //move to the next letter or next word
     letterIndex++;
     if (letterIndex >= words[wordIndex].length) {
       wordIndex++;
@@ -173,14 +164,23 @@ function rightKeyAction() {
       $("#word").empty();
       constructWord(words[wordIndex]);
     }
+    //move the black border
     let letterNum = letterIndex + 1;
     $("#word p:nth-child(" + letterIndex + ")").css("border", "none");
     $("#word p:nth-child(" + letterNum + ")").css("border", "2px solid black");
+    //change header color
     let curLetter = words[wordIndex].charAt(letterIndex);
     let groupIndex = getGroupIndex(curLetter);
     $("#header").attr("data-color", ids[groupIndex]);
     $("#header").css("background-color", colors[groupIndex]);
-    curColor = $("#header").attr("data-color");
+  }
+
+  //update score
+  score++;
+  $("#score").text("Score: " + score + " / " + goalScore);
+  if (score == goalScore) {
+    alert("Yay you win!");
+    endGame();
   }
 
   //posting logs to google sheet
@@ -205,8 +205,6 @@ function animateBar(id) {
     resetBar(id)
   }, speed + 20);
   if (curKey == curColor) { //user moves to the right key
-    console.log("curKey: " + curKey + " curColor:" + curColor);
-    prevColor = curColor;
     clearTimeout(failTimer);
     rightKeyTimer = setTimeout(rightKeyAction, speed);
   } else {
@@ -223,6 +221,7 @@ function resetBar(id) {
     animateBar(curKey);
   } else {
     clearTimeout(barTimer);
+    clearTimeout(failTimer);
   }
 }
 
