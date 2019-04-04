@@ -9,6 +9,7 @@ var score = 0,
   letterIndex = 0,
   wordIndex = 0,
   keyNum = 4,
+  failCount = 0,
   speed = 1500,
   inSession = false,
   curColor = "",
@@ -150,6 +151,14 @@ function getDatetime() {
 }
 
 function rightKeyAction() {
+  //update score
+  score++;
+  $("#score").text("Score: " + score + " / " + goalScore);
+  if (score == goalScore) {
+    alert("Yay you win!");
+    endGame();
+  }
+
   if (mode == "letters") {
     //change header to a new color
     let num = 0;
@@ -184,14 +193,7 @@ function rightKeyAction() {
     let groupIndex = getGroupIndex(curLetter);
     $("#header").attr("data-color", ids[groupIndex]);
     $("#header").css("background-color", colors[groupIndex]);
-  }
-
-  //update score
-  score++;
-  $("#score").text("Score: " + score + " / " + goalScore);
-  if (score == goalScore) {
-    alert("Yay you win!");
-    endGame();
+    curColor = $("#header").attr("data-color");
   }
 
   //posting logs to google sheet
@@ -276,7 +278,7 @@ function endGame() {
       timestamp: $.now(),
       datetime: getDatetime(),
       action: "end",
-      data: score
+      data: failCount
     }
   });
 
@@ -285,6 +287,7 @@ function endGame() {
   letterIndex = 0;
   wordIndex = 0;
   score = 0;
+  failCount = 0;
   $("#score").text("Score: " + score + " / " + goalScore);
   if (mode == "letters") {
     $("#letter").text("A");
@@ -335,6 +338,7 @@ function getGroupIndex(letter) {
 }
 
 function failLog() {
+  failCount++;
   $.ajax({
     url: "https://script.google.com/macros/s/AKfycbzcjmIPchxdXsJkEfb5S82-t98hwoxo3wNG8RPl16PCx5oOEzs/exec",
     type: "post",
