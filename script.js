@@ -64,6 +64,17 @@ $(document).ready(function() {
     }
   });
 
+  $(document).on('touchend', function(e) {
+    if (mode == "spelling") {
+      if (prevKey != "") {
+        resetBar(prevKey);
+      }
+      prevKey = false;
+      clearTimeout(barTimer);
+      clearTimeout(rightKeyTimer);
+    }
+  });
+
   $("#start").on('click', function() {
     $("#start").hide();
     $("#end").show();
